@@ -53,7 +53,7 @@ int main() {
 
 	do {
 		sys_command("clear_terminal");
-		printf("# Menu de opções:\n");
+		printf("# Menu de opcoes:\n");
 
 		printf("\n(1) Cadastrar aluno");
 		printf("\n(2) Excluir aluno");
@@ -63,12 +63,12 @@ int main() {
 		printf("\n(6) Finalizar programa");
 
 		do {
-			printf("\n\nEscolha uma das opções acima: ");
+			printf("\n\nEscolha uma das opcoes acima: ");
 			scanf("%d", &option);
 			sys_command("clear_stdin");
 
 			if (option < 1 || option > 6) {
-				printf("\nOpção inválida!");
+				printf("\nOpcao invalida!");
 			}
 		} while (option < 1 || option > 6);
 
@@ -91,7 +91,7 @@ int main() {
 		}
 
 		if (option != 6) {
-			printf("\n# Ação finalizada!\n");
+			printf("\n# Acao finalizada!\n");
 			sys_command("pause_terminal");
 		}
 	} while (option != 6);
@@ -133,7 +133,7 @@ void sys_command(char *command) {
 			int c = getchar();
 			return;
 		}
-	#elif
+	#else
 		if (strcmp(command, "clear_terminal") == 0) {
 			system("cls");
 			return;
@@ -154,12 +154,12 @@ void sys_command(char *command) {
 void print_student(Student *student) {
 	int i;
 
-	printf("\nMatrícula: %s", student->registration);
+	printf("\nMatricula: %s", student->registration);
 	printf("\nNome: %s", student->name);
-	printf("\nCódigo do curso: %s", student->course_code);
+	printf("\nCodigo do curso: %s", student->course_code);
 	printf("\nData de nascimento: %02d/%02d/%04d", student->born_date.day, student->born_date.month, student->born_date.year);
-	printf("\nMês e ano de ingresso: %02d/%04d", student->join_school_date.month, student->join_school_date.year);
-	printf("\nCódigo das disciplinas em que está matriculado:");
+	printf("\nMes e ano de ingresso: %02d/%04d", student->join_school_date.month, student->join_school_date.year);
+	printf("\nCodigo das disciplinas em que esta matriculado:");
 
 	for (i = 0; i < SUBJECTS_LENGTH; i++) {
 		if (strcmp(student->subject_codes[i], "0") == 0) {
@@ -187,17 +187,17 @@ void register_student(StudentArray *studentArray) {
 	printf("# Cadastrar aluno\n\n");
 
 	do {
-		printf("Número de matrícula (não pode ser o valor 0): ");
+		printf("Numero de matricula (nao pode ser o valor 0): ");
 		sys_command("clear_stdin");
 		fgets(student.registration, CODE_LENGTH, stdin);
 		normalize_string(student.registration);
 
 		if (strcmp(student.registration, "0") == 0) {
-			printf("\nMatrícula inválida!\n\n");
+			printf("\nMatricula invalida!\n\n");
 		} else {
 			for (i = 0; i < studentArray->size; i++) {
 				if (strcmp(studentArray->data[i].registration, student.registration) == 0) {
-					printf("\nA matrícula informada já existe em nossa base de dados!\n");
+					printf("\nA matricula informada ja existe em nossa base de dados!\n");
 					return;
 				}
 			}
@@ -209,7 +209,7 @@ void register_student(StudentArray *studentArray) {
 	fgets(student.name, NAME_LENGTH, stdin);
 	normalize_string(student.name);
 	
-	printf("Código do curso: ");
+	printf("Codigo do curso: ");
 	sys_command("clear_stdin");
 	fgets(student.course_code, CODE_LENGTH, stdin);
 	normalize_string(student.course_code);
@@ -219,16 +219,16 @@ void register_student(StudentArray *studentArray) {
 		scannedLength = scanf("%d/%d/%d", &student.born_date.day, &student.born_date.month, &student.born_date.year);
 	
 		if (scannedLength != 3) {
-	        printf("\nData inválida!\n\n");
+	        printf("\nData invalida!\n\n");
 	    }
 	} while (scannedLength != 3);
 	
 	do {
-		printf("Mês e ano de ingresso (MM/AAAA): ");
+		printf("Mes e ano de ingresso (MM/AAAA): ");
 		scannedLength = scanf("%d/%d", &student.join_school_date.month, &student.join_school_date.year);
 	
 		if (scannedLength != 2) {
-	        printf("\nData inválida!\n\n");
+	        printf("\nData invalida!\n\n");
 	    }
 	} while (scannedLength != 2);
 
@@ -236,7 +236,7 @@ void register_student(StudentArray *studentArray) {
 	
 	for (i = 0; i < SUBJECTS_LENGTH; i++) {
 		if (askForSubject == 1) {
-			printf("Informe o código de uma disciplina que o aluno esteja cursando (serão aceitas no máximo %d) ou 0 para finalizar o cadastro: ", SUBJECTS_LENGTH);
+			printf("Informe o codigo de uma disciplina que o aluno esteja cursando (serao aceitas no maximo %d) ou 0 para finalizar o cadastro: ", SUBJECTS_LENGTH);
 			sys_command("clear_stdin");
 			fgets(student.subject_codes[i], CODE_LENGTH, stdin);
 			normalize_string(student.subject_codes[i]);
@@ -255,7 +255,7 @@ void register_student(StudentArray *studentArray) {
 		Student *temp = realloc(studentArray->data, (studentArray->size + 1) * sizeof(Student));
 
 		if (temp == NULL) {
-			printf("\nOcorreu um erro ao tentar realocar a memória para cadastrar um novo aluno e os dados serão perdidos. Por favor, tente novamente!\n");
+			printf("\nOcorreu um erro ao tentar realocar a memoria para cadastrar um novo aluno e os dados serao perdidos. Por favor, tente novamente!\n");
 		} else {
 			studentArray->data = temp;
 		}
@@ -281,7 +281,7 @@ void delete_student(StudentArray *studentArray) {
 	}
 
 	do {
-		printf("Informe o número da matrícula do aluno que deseja excluir ou 0 para voltar: ");
+		printf("Informe o numero da matricula do aluno que deseja excluir ou 0 para voltar: ");
 		sys_command("clear_stdin");
 		fgets(registration, CODE_LENGTH, stdin);
 		normalize_string(registration);
@@ -305,7 +305,7 @@ void delete_student(StudentArray *studentArray) {
 		}
 		
 		if (tempCounter > newSize) {
-			printf("\nMatrícula não encontrada!\n\n");
+			printf("\nMatricula nao encontrada!\n\n");
 		}
 	} while (tempCounter > newSize);
 	
@@ -329,7 +329,7 @@ void update_student_subjects(StudentArray *studentArray) {
 	}
 
 	do {
-		printf("Informe o número da matrícula do aluno que deseja efetuar a ação ou 0 para voltar: ");
+		printf("Informe o numero da matricula do aluno que deseja efetuar a acao ou 0 para voltar: ");
 		sys_command("clear_stdin");
 		fgets(registration, CODE_LENGTH, stdin);
 		normalize_string(registration);
@@ -349,7 +349,7 @@ void update_student_subjects(StudentArray *studentArray) {
 		}
 
 		if (foundStudent == 0) {
-			printf("\nMatrícula não encontrada!\n\n");
+			printf("\nMatricula nao encontrada!\n\n");
 		}
 	} while (foundStudent == 0);
 
@@ -357,7 +357,7 @@ void update_student_subjects(StudentArray *studentArray) {
 
 	for (i = 0; i < SUBJECTS_LENGTH; i++) {
 		if (askForSubject == 1) {
-			printf("Informe o código de uma disciplina que o aluno esteja cursando (serão aceitas no máximo %d) ou 0 para finalizar o cadastro: ", SUBJECTS_LENGTH);
+			printf("Informe o codigo de uma disciplina que o aluno esteja cursando (serao aceitas no maximo %d) ou 0 para finalizar a alteração: ", SUBJECTS_LENGTH);
 			sys_command("clear_stdin");
 			fgets(student->subject_codes[i], CODE_LENGTH, stdin);
 			normalize_string(student->subject_codes[i]);
@@ -406,7 +406,7 @@ void show_student(StudentArray *studentArray) {
 	}
 
 	do {
-		printf("Informe o número da matrícula do aluno que deseja efetuar a ação ou 0 para voltar: ");
+		printf("Informe o numero da matricula do aluno que deseja efetuar a acao ou 0 para voltar: ");
 		sys_command("clear_stdin");
 		fgets(registration, CODE_LENGTH, stdin);
 		normalize_string(registration);
@@ -429,7 +429,7 @@ void show_student(StudentArray *studentArray) {
 		}
 
 		if (foundStudent == 0) {
-			printf("\nMatrícula não encontrada!\n\n");
+			printf("\nMatricula nao encontrada!\n\n");
 		}
 	} while (foundStudent == 0);
 }
