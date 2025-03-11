@@ -44,26 +44,62 @@ void show_student(StudentArray *studentArray);
 int main() {
 	StudentArray studentArray;
 	int i;
+	int option;
 	
 	studentArray.data = NULL;
 	studentArray.size = 0;
 	
 	setlocale(LC_ALL, "Portuguese");
-	
-	show_students(&studentArray);
-	show_student(&studentArray);
-	register_student(&studentArray);
-	show_students(&studentArray);
-	show_student(&studentArray);
-	update_student_subjects(&studentArray);
-	show_students(&studentArray);
-	delete_student(&studentArray);
-	show_students(&studentArray);
+
+	do {
+		sys_command("clear_terminal");
+		printf("# Menu de opções:\n");
+
+		printf("\n(1) Cadastrar aluno");
+		printf("\n(2) Excluir aluno");
+		printf("\n(3) Alterar disciplinas");
+		printf("\n(4) Listar todos os alunos");
+		printf("\n(5) Exibir aluno");
+		printf("\n(6) Finalizar programa");
+
+		do {
+			printf("\n\nEscolha uma das opções acima: ");
+			scanf("%d", &option);
+			sys_command("clear_stdin");
+
+			if (option < 1 || option > 6) {
+				printf("\nOpção inválida!");
+			}
+		} while (option < 1 || option > 6);
+
+		switch (option) {
+			case 1:
+				register_student(&studentArray);
+				break;
+			case 2:
+				delete_student(&studentArray);
+				break;
+			case 3:
+				update_student_subjects(&studentArray);
+				break;
+			case 4:
+				show_students(&studentArray);
+				break;
+			case 5:
+				show_student(&studentArray);
+				break;
+		}
+
+		if (option != 6) {
+			printf("\n# Ação finalizada!\n");
+			sys_command("pause_terminal");
+		}
+	} while (option != 6);
 		
 	if (studentArray.size > 0) {
 		free(studentArray.data);
 	}
-	
+
 	sys_command("clear_terminal");
 	printf("# Programa finalizado!\n");
 	sys_command("pause_terminal");
@@ -144,16 +180,29 @@ void print_student(Student *student) {
 void register_student(StudentArray *studentArray) {
 	Student student;
 	int scannedLength;
-	int askForSubject = 1;
+	int askForSubject;
 	int i;
 	
 	sys_command("clear_terminal");
 	printf("# Cadastrar aluno\n\n");
-	
-	printf("Número de matrícula: ");
-	sys_command("clear_stdin");
-	fgets(student.registration, CODE_LENGTH, stdin);
-	normalize_string(student.registration);
+
+	do {
+		printf("Número de matrícula (não pode ser o valor 0): ");
+		sys_command("clear_stdin");
+		fgets(student.registration, CODE_LENGTH, stdin);
+		normalize_string(student.registration);
+
+		if (strcmp(student.registration, "0") == 0) {
+			printf("\nMatrícula inválida!\n\n");
+		} else {
+			for (i = 0; i < studentArray->size; i++) {
+				if (strcmp(studentArray->data[i].registration, student.registration) == 0) {
+					printf("\nA matrícula informada já existe em nossa base de dados!\n");
+					return;
+				}
+			}
+		}
+	} while (strcmp(student.registration, "0") == 0);	
 	
 	printf("Nome: ");
 	sys_command("clear_stdin");
@@ -182,6 +231,8 @@ void register_student(StudentArray *studentArray) {
 	        printf("\nData inválida!\n\n");
 	    }
 	} while (scannedLength != 2);
+
+	askForSubject = 1;
 	
 	for (i = 0; i < SUBJECTS_LENGTH; i++) {
 		if (askForSubject == 1) {
@@ -197,20 +248,21 @@ void register_student(StudentArray *studentArray) {
 			strcpy(student.subject_codes[i], "0");
 		}
 	}
-	
+
 	if (studentArray->data == NULL) {
-		studentArray->data = (Student *)malloc(sizeof(Student));
+		studentArray->data = malloc(sizeof(Student));
 	} else {
-		Student *temp = (Student *)realloc(studentArray->data, studentArray->size * sizeof(Student));
-		studentArray->data = temp;
-		free(temp);
+		Student *temp = realloc(studentArray->data, (studentArray->size + 1) * sizeof(Student));
+
+		if (temp == NULL) {
+			printf("\nOcorreu um erro ao tentar realocar a memória para cadastrar um novo aluno e os dados serão perdidos. Por favor, tente novamente!\n");
+		} else {
+			studentArray->data = temp;
+		}
 	}
 	
 	studentArray->data[studentArray->size] = student;
 	studentArray->size++;
-	
-	printf("\n# Cadastro finalizado!\n");
-	sys_command("pause_terminal");
 }
 
 void delete_student(StudentArray *studentArray) {
@@ -222,12 +274,21 @@ void delete_student(StudentArray *studentArray) {
 	
 	sys_command("clear_terminal");
 	printf("# Excluir aluno\n\n");
-	
+
+	if (studentArray->size == 0) {
+		printf("[Nenhum aluno cadastrado]\n");
+		return;
+	}
+
 	do {
-		printf("Informe o número da matrícula do aluno que deseja excluir: ");
+		printf("Informe o número da matrícula do aluno que deseja excluir ou 0 para voltar: ");
 		sys_command("clear_stdin");
 		fgets(registration, CODE_LENGTH, stdin);
 		normalize_string(registration);
+
+		if (strcmp(registration, "0") == 0) {
+			return;
+		}
 		
 		tempCounter = 0;
 		
@@ -250,10 +311,6 @@ void delete_student(StudentArray *studentArray) {
 	
 	studentArray->data = temp;
 	studentArray->size--;
-	free(temp);
-	
-	printf("\n# Exclusão finalizada!\n");
-	sys_command("pause_terminal");
 }
 
 void update_student_subjects(StudentArray *studentArray) {
@@ -266,11 +323,20 @@ void update_student_subjects(StudentArray *studentArray) {
 	sys_command("clear_terminal");
 	printf("# Alterar disciplinas\n\n");
 
+	if (studentArray->size == 0) {
+		printf("[Nenhum aluno cadastrado]\n");
+		return;
+	}
+
 	do {
-		printf("Informe o número da matrícula do aluno que deseja efetuar a ação: ");
+		printf("Informe o número da matrícula do aluno que deseja efetuar a ação ou 0 para voltar: ");
 		sys_command("clear_stdin");
 		fgets(registration, CODE_LENGTH, stdin);
 		normalize_string(registration);
+
+		if (strcmp(registration, "0") == 0) {
+			return;
+		}
 		
 		foundStudent = 0;
 		
@@ -302,11 +368,7 @@ void update_student_subjects(StudentArray *studentArray) {
 		} else {
 			strcpy(student->subject_codes[i], "0");
 		}
-	}
-
-	free(student);
-	printf("\n# Alteração finalizada!\n");
-	sys_command("pause_terminal");
+	}	
 }
 
 void show_students(StudentArray *studentArray) {
@@ -315,19 +377,19 @@ void show_students(StudentArray *studentArray) {
 	sys_command("clear_terminal");
 	printf("# Listar todos os alunos\n\n");
 
-	if (studentArray->size > 0) {
-		printf("========================================");
-		
-		for (i = 0; i < studentArray->size; i++) {
-			print_student(&studentArray->data[i]);
-			printf("========================================");
-		}
-	} else {
-		printf("[Nenhum aluno cadastrado]");
+	if (studentArray->size == 0) {
+		printf("[Nenhum aluno cadastrado]\n");
+		return;
 	}
 
-	printf("\n\n# Listagem finalizada!\n");
-	sys_command("pause_terminal");
+	printf("========================================");
+	
+	for (i = 0; i < studentArray->size; i++) {
+		print_student(&studentArray->data[i]);
+		printf("========================================");
+	}
+
+	printf("\n");
 }
 
 void show_student(StudentArray *studentArray) {
@@ -336,36 +398,38 @@ void show_student(StudentArray *studentArray) {
 	int i;
 
 	sys_command("clear_terminal");
-	printf("# Listar um aluno\n\n");
+	printf("# Exibir aluno\n\n");
 
-	if (studentArray->size > 0) {
-		do {
-			printf("Informe o número da matrícula do aluno que deseja efetuar a ação: ");
-			sys_command("clear_stdin");
-			fgets(registration, CODE_LENGTH, stdin);
-			normalize_string(registration);
-			
-			foundStudent = 0;
-			
-			for (i = 0; i < studentArray->size; i++) {
-				if (strcmp(studentArray->data[i].registration, registration) == 0) {
-					foundStudent = 1;
-	
-					printf("\n========================================");
-					print_student(&studentArray->data[i]);
-					printf("========================================");
-					break;
-				}
-			}
-	
-			if (foundStudent == 0) {
-				printf("\nMatrícula não encontrada!\n\n");
-			}
-		} while (foundStudent == 0);
-	} else {
-		printf("[Nenhum aluno cadastrado]");
+	if (studentArray->size == 0) {
+		printf("[Nenhum aluno cadastrado]\n");
+		return;
 	}
 
-	printf("\n\n# Listagem finalizada!\n");
-	sys_command("pause_terminal");
+	do {
+		printf("Informe o número da matrícula do aluno que deseja efetuar a ação ou 0 para voltar: ");
+		sys_command("clear_stdin");
+		fgets(registration, CODE_LENGTH, stdin);
+		normalize_string(registration);
+
+		if (strcmp(registration, "0") == 0) {
+			return;
+		}
+		
+		foundStudent = 0;
+		
+		for (i = 0; i < studentArray->size; i++) {
+			if (strcmp(studentArray->data[i].registration, registration) == 0) {
+				foundStudent = 1;
+
+				printf("\n========================================");
+				print_student(&studentArray->data[i]);
+				printf("========================================\n");
+				break;
+			}
+		}
+
+		if (foundStudent == 0) {
+			printf("\nMatrícula não encontrada!\n\n");
+		}
+	} while (foundStudent == 0);
 }
