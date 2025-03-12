@@ -6,6 +6,8 @@
 #define CODE_LENGTH 10
 #define NAME_LENGTH 50
 #define SUBJECTS_LENGTH 8
+#define TOTAL_FIELDS 13
+#define DATABASE "database.txt"
 
 // Struct definitions
 typedef struct {
@@ -32,6 +34,8 @@ typedef struct {
 void normalize_string(char *string);
 void sys_command(char *string);
 void print_student(Student *student);
+void save_into_database(StudentArray *studentArray);
+int load_from_database(StudentArray *studentArray);
 
 // Action functions declarations
 void register_student(StudentArray *studentArray);
@@ -46,8 +50,10 @@ int main() {
 	int i;
 	int option;
 	
-	studentArray.data = NULL;
-	studentArray.size = 0;
+	if (load_from_database(&studentArray) != 0) {
+		studentArray.data = NULL;
+		studentArray.size = 0;
+	}
 	
 	setlocale(LC_ALL, "Portuguese");
 
@@ -176,6 +182,82 @@ void print_student(Student *student) {
 	printf("\n");
 }
 
+void save_into_database(StudentArray *studentArray) {
+	FILE *database = fopen(DATABASE, "wt");
+	int i;
+	int j;
+	
+	if (database == NULL) {
+		printf("Ocorreu um erro ao tentar abrir o arquivo de banco de dados!\n");
+		sys_command("pause_terminal");
+	}
+	
+	fprintf(database, "%d\n", studentArray->size);
+	
+	for (i = 0; i < studentArray->size; i++) {
+		Student student = studentArray->data[i];
+		
+		fprintf(database, "%s\n", student.registration);
+		fprintf(database, "%s\n", student.name);
+		fprintf(database, "%s\n", student.course_code);
+		fprintf(database, "%d %d %d\n", student.born_date.day, student.born_date.month, student.born_date.year);
+		fprintf(database, "%d %d\n", student.join_school_date.month, student.join_school_date.year);
+		
+		for (j = 0; j < SUBJECTS_LENGTH; j++) {
+			fprintf(database, "%s\n", student.subject_codes[j]);
+		}
+	}
+	
+	fclose(database);
+}
+
+int load_from_database(StudentArray *studentArray) {
+	FILE *database = fopen(DATABASE, "rt");
+	int i;
+	int j;
+	
+	if (database == NULL) {
+		printf("Ocorreu um erro ao tentar abrir o arquivo de banco de dados!\n");
+		sys_command("pause_terminal");
+		return 1;
+	}
+	
+	if (feof(database)) {
+		fclose(database);
+		return 1;
+	}
+	
+	fscanf(database, "%d\n", &studentArray->size);
+	
+	studentArray->data = malloc(studentArray->size * sizeof(Student));
+	
+	for (i = 0; i < studentArray->size; i++) {
+		Student student;
+		
+		fgets(student.registration, CODE_LENGTH, database);
+		normalize_string(student.registration);
+		
+		fgets(student.name, NAME_LENGTH, database);
+		normalize_string(student.name);
+		
+		fgets(student.course_code, CODE_LENGTH, database);
+		normalize_string(student.course_code);
+		
+		fscanf(database, "%d %d %d\n", &student.born_date.day, &student.born_date.month, &student.born_date.year);
+		fscanf(database, "%d %d\n", &student.join_school_date.month, &student.join_school_date.year);
+		
+		for (j = 0; j < SUBJECTS_LENGTH; j++) {
+			fgets(student.subject_codes[j], CODE_LENGTH, database);
+			normalize_string(student.subject_codes[j]);
+		}
+		
+		studentArray->data[i] = student;
+	}
+	
+	fclose(database);
+	return 0;
+}
+
 // Action functions implementations
 void register_student(StudentArray *studentArray) {
 	Student student;
@@ -216,6 +298,7 @@ void register_student(StudentArray *studentArray) {
 	
 	do {
 		printf("Data de nascimento (DD/MM/AAAA): ");
+		sys_command("clear_stdin");
 		scannedLength = scanf("%d/%d/%d", &student.born_date.day, &student.born_date.month, &student.born_date.year);
 	
 		if (scannedLength != 3) {
@@ -225,6 +308,7 @@ void register_student(StudentArray *studentArray) {
 	
 	do {
 		printf("Mes e ano de ingresso (MM/AAAA): ");
+		sys_command("clear_stdin");
 		scannedLength = scanf("%d/%d", &student.join_school_date.month, &student.join_school_date.year);
 	
 		if (scannedLength != 2) {
@@ -263,6 +347,8 @@ void register_student(StudentArray *studentArray) {
 	
 	studentArray->data[studentArray->size] = student;
 	studentArray->size++;
+	
+	save_into_database(studentArray);
 }
 
 void delete_student(StudentArray *studentArray) {
@@ -311,6 +397,8 @@ void delete_student(StudentArray *studentArray) {
 	
 	studentArray->data = temp;
 	studentArray->size--;
+	
+	save_into_database(studentArray);
 }
 
 void update_student_subjects(StudentArray *studentArray) {
@@ -357,7 +445,7 @@ void update_student_subjects(StudentArray *studentArray) {
 
 	for (i = 0; i < SUBJECTS_LENGTH; i++) {
 		if (askForSubject == 1) {
-			printf("Informe o codigo de uma disciplina que o aluno esteja cursando (serao aceitas no maximo %d) ou 0 para finalizar a alteração: ", SUBJECTS_LENGTH);
+			printf("Informe o codigo de uma disciplina que o aluno esteja cursando (serao aceitas no maximo %d) ou 0 para finalizar a alteracao: ", SUBJECTS_LENGTH);
 			sys_command("clear_stdin");
 			fgets(student->subject_codes[i], CODE_LENGTH, stdin);
 			normalize_string(student->subject_codes[i]);
@@ -368,7 +456,9 @@ void update_student_subjects(StudentArray *studentArray) {
 		} else {
 			strcpy(student->subject_codes[i], "0");
 		}
-	}	
+	}
+	
+	save_into_database(studentArray);
 }
 
 void show_students(StudentArray *studentArray) {
