@@ -34,8 +34,8 @@ typedef struct {
 void normalize_string(char *string);
 void sys_command(char *string);
 void print_student(Student *student);
-void save_into_database(StudentArray *studentArray);
-int load_from_database(StudentArray *studentArray);
+void save_into_text_database(StudentArray *studentArray);
+void load_from_text_database(StudentArray *studentArray);
 
 // Action functions declarations
 void register_student(StudentArray *studentArray);
@@ -50,10 +50,8 @@ int main() {
 	int i;
 	int option;
 	
-	if (load_from_database(&studentArray) != 0) {
-		studentArray.data = NULL;
-		studentArray.size = 0;
-	}
+	studentArray.data = NULL;
+	studentArray.size = 0;
 	
 	setlocale(LC_ALL, "Portuguese");
 
@@ -66,17 +64,19 @@ int main() {
 		printf("\n(3) Alterar disciplinas");
 		printf("\n(4) Listar todos os alunos");
 		printf("\n(5) Exibir aluno");
-		printf("\n(6) Finalizar programa");
+		printf("\n(6) Criar backup (texto)");
+		printf("\n(7) Restaurar dados do backup (texto)");
+		printf("\n(0) Finalizar programa");
 
 		do {
 			printf("\n\nEscolha uma das opcoes acima: ");
 			scanf("%d", &option);
 			sys_command("clear_stdin");
 
-			if (option < 1 || option > 6) {
+			if (option < 0 || option > 7) {
 				printf("\nOpcao invalida!");
 			}
-		} while (option < 1 || option > 6);
+		} while (option < 0 || option > 7);
 
 		switch (option) {
 			case 1:
@@ -94,13 +94,19 @@ int main() {
 			case 5:
 				show_student(&studentArray);
 				break;
+			case 6:
+				save_into_text_database(&studentArray);
+				break;
+			case 7:
+				load_from_text_database(&studentArray);
+				break;
 		}
 
-		if (option != 6) {
+		if (option != 0) {
 			printf("\n# Acao finalizada!\n");
 			sys_command("pause_terminal");
 		}
-	} while (option != 6);
+	} while (option != 0);
 		
 	if (studentArray.size > 0) {
 		free(studentArray.data);
@@ -182,14 +188,17 @@ void print_student(Student *student) {
 	printf("\n");
 }
 
-void save_into_database(StudentArray *studentArray) {
+void save_into_text_database(StudentArray *studentArray) {
 	FILE *database = fopen(DATABASE, "wt");
 	int i;
 	int j;
 	
+	sys_command("clear_terminal");
+	printf("# Criar backup (texto)\n\n");
+	
 	if (database == NULL) {
-		printf("Ocorreu um erro ao tentar abrir o arquivo de banco de dados!\n");
-		sys_command("pause_terminal");
+		printf("[Ocorreu um erro ao tentar abrir o arquivo (texto) de banco de dados]\n");
+		return;
 	}
 	
 	fprintf(database, "%d\n", studentArray->size);
@@ -209,22 +218,32 @@ void save_into_database(StudentArray *studentArray) {
 	}
 	
 	fclose(database);
+	printf("[Backup (texto) de banco de dados criado com sucesso]\n");
 }
 
-int load_from_database(StudentArray *studentArray) {
+void load_from_text_database(StudentArray *studentArray) {
 	FILE *database = fopen(DATABASE, "rt");
 	int i;
 	int j;
 	
+	sys_command("clear_terminal");
+	printf("# Restaurar dados do backup (texto)\n\n");
+	
 	if (database == NULL) {
-		printf("Ocorreu um erro ao tentar abrir o arquivo de banco de dados!\n");
-		sys_command("pause_terminal");
-		return 1;
+		printf("Ocorreu um erro ao tentar abrir o arquivo (texto) de banco de dados!\n");
+		return;
 	}
 	
 	if (feof(database)) {
 		fclose(database);
-		return 1;
+		
+		if (studentArray->size > 0) {
+			free(studentArray->data);
+		}
+		
+		studentArray->data = NULL;
+		studentArray->size = 0;
+		return;
 	}
 	
 	fscanf(database, "%d\n", &studentArray->size);
@@ -255,7 +274,7 @@ int load_from_database(StudentArray *studentArray) {
 	}
 	
 	fclose(database);
-	return 0;
+	printf("[Backup (texto) de banco de dados restaurado com sucesso]\n");
 }
 
 // Action functions implementations
@@ -347,8 +366,6 @@ void register_student(StudentArray *studentArray) {
 	
 	studentArray->data[studentArray->size] = student;
 	studentArray->size++;
-	
-	save_into_database(studentArray);
 }
 
 void delete_student(StudentArray *studentArray) {
@@ -397,8 +414,6 @@ void delete_student(StudentArray *studentArray) {
 	
 	studentArray->data = temp;
 	studentArray->size--;
-	
-	save_into_database(studentArray);
 }
 
 void update_student_subjects(StudentArray *studentArray) {
@@ -457,8 +472,6 @@ void update_student_subjects(StudentArray *studentArray) {
 			strcpy(student->subject_codes[i], "0");
 		}
 	}
-	
-	save_into_database(studentArray);
 }
 
 void show_students(StudentArray *studentArray) {
