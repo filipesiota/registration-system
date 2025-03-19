@@ -7,7 +7,8 @@
 #define NAME_LENGTH 50
 #define SUBJECTS_LENGTH 8
 #define TOTAL_FIELDS 13
-#define DATABASE "database.txt"
+#define DATABASE_T "database.txt"
+#define DATABASE_B "database.dat"
 
 // Struct definitions
 typedef struct {
@@ -36,6 +37,8 @@ void sys_command(char *string);
 void print_student(Student *student);
 void save_into_text_database(StudentArray *studentArray);
 void load_from_text_database(StudentArray *studentArray);
+void save_into_binary_database(StudentArray *studentArray);
+void load_from_binary_database(StudentArray *studentArray);
 
 // Action functions declarations
 void register_student(StudentArray *studentArray);
@@ -66,6 +69,8 @@ int main() {
 		printf("\n(5) Exibir aluno");
 		printf("\n(6) Criar backup (texto)");
 		printf("\n(7) Restaurar dados do backup (texto)");
+		printf("\n(8) Criar backup (binario)");
+		printf("\n(9) Restaurar dados do backup (binario)");
 		printf("\n(0) Finalizar programa");
 
 		do {
@@ -73,10 +78,10 @@ int main() {
 			scanf("%d", &option);
 			sys_command("clear_stdin");
 
-			if (option < 0 || option > 7) {
+			if (option < 0 || option > 9) {
 				printf("\nOpcao invalida!");
 			}
-		} while (option < 0 || option > 7);
+		} while (option < 0 || option > 9);
 
 		switch (option) {
 			case 1:
@@ -99,6 +104,12 @@ int main() {
 				break;
 			case 7:
 				load_from_text_database(&studentArray);
+				break;
+			case 8:
+				save_into_binary_database(&studentArray);
+				break;
+			case 9:
+				load_from_binary_database(&studentArray);
 				break;
 		}
 
@@ -189,7 +200,7 @@ void print_student(Student *student) {
 }
 
 void save_into_text_database(StudentArray *studentArray) {
-	FILE *database = fopen(DATABASE, "wt");
+	FILE *database = fopen(DATABASE_T, "wt");
 	int i;
 	int j;
 	
@@ -222,7 +233,7 @@ void save_into_text_database(StudentArray *studentArray) {
 }
 
 void load_from_text_database(StudentArray *studentArray) {
-	FILE *database = fopen(DATABASE, "rt");
+	FILE *database = fopen(DATABASE_T, "rt");
 	int i;
 	int j;
 	
@@ -234,15 +245,15 @@ void load_from_text_database(StudentArray *studentArray) {
 		return;
 	}
 	
+	if (studentArray->size > 0) {
+		free(studentArray->data);
+	}
+	
+	studentArray->data = NULL;
+	studentArray->size = 0;
+	
 	if (feof(database)) {
 		fclose(database);
-		
-		if (studentArray->size > 0) {
-			free(studentArray->data);
-		}
-		
-		studentArray->data = NULL;
-		studentArray->size = 0;
 		return;
 	}
 	
@@ -275,6 +286,112 @@ void load_from_text_database(StudentArray *studentArray) {
 	
 	fclose(database);
 	printf("[Backup (texto) de banco de dados restaurado com sucesso]\n");
+}
+
+void save_into_binary_database(StudentArray *studentArray) {
+	FILE *database = fopen(DATABASE_B, "wb");
+	int i;
+	int j;
+	
+	sys_command("clear_terminal");
+	printf("# Criar backup (binario)\n\n");
+	
+	if (database == NULL) {
+		printf("[Ocorreu um erro ao tentar abrir o arquivo (binario) de banco de dados]\n");
+		return;
+	}
+	
+	fwrite(&studentArray->size, sizeof(int), 1, database);
+	
+	for (i = 0; i < studentArray->size; i++) {
+		Student student = studentArray->data[i];
+		size_t str_size;
+		
+		str_size = strlen(student.registration);
+		fwrite(&str_size, sizeof(size_t), 1, database);
+		fwrite(student.registration, sizeof(char), str_size, database);
+		
+		str_size = strlen(student.name);
+		fwrite(&str_size, sizeof(size_t), 1, database);
+		fwrite(student.name, sizeof(char), str_size, database);
+		
+		str_size = strlen(student.course_code);
+		fwrite(&str_size, sizeof(size_t), 1, database);
+		fwrite(student.course_code, sizeof(char), str_size, database);
+		
+		fwrite(&student.born_date, sizeof(Date), 1, database);
+		fwrite(&student.join_school_date, sizeof(Date), 1, database);
+		
+		for (j = 0; j < SUBJECTS_LENGTH; j++) {
+			str_size = strlen(student.subject_codes[j]);
+			fwrite(&str_size, sizeof(size_t), 1, database);		
+			fwrite(student.subject_codes[j], sizeof(char), str_size, database);
+		}
+	}
+	
+	fclose(database);
+	printf("[Backup (binario) de banco de dados criado com sucesso]\n");
+}
+
+void load_from_binary_database(StudentArray *studentArray) {
+	FILE *database = fopen(DATABASE_B, "rb");
+	int i;
+	int j;
+	
+	sys_command("clear_terminal");
+	printf("# Restaurar dados do backup (binario)\n\n");
+	
+	if (database == NULL) {
+		printf("Ocorreu um erro ao tentar abrir o arquivo (binario) de banco de dados!\n");
+		return;
+	}
+	
+	if (studentArray->size > 0) {
+		free(studentArray->data);
+	}
+	
+	studentArray->data = NULL;
+	studentArray->size = 0;
+	
+	if (feof(database)) {
+		fclose(database);
+		return;
+	}
+	
+	fread(&studentArray->size, sizeof(int), 1, database);
+	
+	studentArray->data = malloc(studentArray->size * sizeof(Student));
+	
+	for (i = 0; i < studentArray->size; i++) {
+		Student student;
+		size_t str_size;
+		
+		fread(&str_size, sizeof(size_t), 1, database);
+		fread(student.registration, sizeof(char), str_size, database);
+		student.registration[str_size] = '\0';
+		
+		fread(&str_size, sizeof(size_t), 1, database);
+		fread(student.name, sizeof(char), str_size, database);
+		student.name[str_size] = '\0';
+		
+		fread(&str_size, sizeof(size_t), 1, database);
+		fread(student.course_code, sizeof(char), str_size, database);
+		student.course_code[str_size] = '\0';
+		
+		fread(&student.born_date, sizeof(Date), 1, database);
+		fread(&student.join_school_date, sizeof(Date), 1, database);
+		
+		for (j = 0; j < SUBJECTS_LENGTH; j++) {			
+			fread(&str_size, sizeof(size_t), 1, database);
+			fread(student.subject_codes[j], sizeof(char), str_size, database);
+			student.subject_codes[j][str_size] = '\0';
+		}
+		
+		studentArray->data[i] = student;
+	}
+	
+	fclose(database);
+	printf("[Backup (binario) de banco de dados restaurado com sucesso]\n");
 }
 
 // Action functions implementations
