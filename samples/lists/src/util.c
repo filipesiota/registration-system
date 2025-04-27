@@ -1,4 +1,4 @@
-#include <common/sys_command.h>
+#include <common/util.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,7 +8,7 @@
 #include <stdio_ext.h>
 #endif
 
-void sys_command(char *command) {
+void sysCommand(char *command) {
 	#if defined(__linux__) || defined(__APPLE__)
 		if (strcmp(command, "clear_terminal") == 0) {
 			system("clear");
@@ -22,6 +22,7 @@ void sys_command(char *command) {
 
 		if (strcmp(command, "pause_terminal") == 0) {
 			printf("Pressione qualquer tecla para continuar...");
+			sysCommand("clear_stdin");
 			int c = getchar();
 			return;
 		}
@@ -41,4 +42,12 @@ void sys_command(char *command) {
 			return;
 		}
 	#endif
+}
+
+void normalizeString(char *string) {
+    size_t len = strlen(string);
+	
+	if (len > 0 && string[len - 1] == '\n') {
+	    string[len - 1] = '\0';
+	}
 }

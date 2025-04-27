@@ -8,4 +8,9 @@ typedef struct {
     char description[TASK_DESCRIPTION_LENGTH];
 } Task;
 
+Task createTask();
+int requestTaskIndex(int maxIndex);
+char* requestTaskDescription();
+void showTask(Task task, int index);
+
 #endif

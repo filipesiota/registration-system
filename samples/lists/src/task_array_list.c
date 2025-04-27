@@ -13,6 +13,15 @@ TaskArrayList initTaskArrayList() {
     return list;
 }
 
+void freeTaskArrayList(TaskArrayList *list) {
+    if (list->tasks != NULL) {
+        free(list->tasks);
+        list->tasks = NULL;
+    }
+    
+    list->size = 0;
+}
+
 void addTask(TaskArrayList *list, Task task) {
     Task *temp = realloc(list->tasks, (list->size + 1) * sizeof(Task));
 
@@ -20,8 +29,6 @@ void addTask(TaskArrayList *list, Task task) {
         printf("[task_array_list] addTask: Nao foi possivel realocar a memoria");
         return;
     }
-
-    task.id = list->size;
 
     list->tasks = temp;
     list->tasks[list->size] = task;
@@ -54,21 +61,21 @@ void removeTask(TaskArrayList *list, int index) {
 
 void listTasks(TaskArrayList *list) {
     if (list->size == 0) {
+        printf("[Nenhuma tarefa cadastrada]\n");
         return;
     }
 
     int i;
 
-    printf("\n# =============================== #");
+    printf("# =============================== #\n");
 
     for (i = 0; i < list->size; i++) {
-        printf("\nID: %d", list->tasks[i].id);
-        printf("\nDescricao: %s", list->tasks[i].description);
-        printf("\n# =============================== #");
+        showTask(list->tasks[i], i);
+        printf("# =============================== #\n");
     }
 }
 
-int findTaskIndex(TaskArrayList *list, char description[TASK_DESCRIPTION_LENGTH]) {
+int findTaskIndexByDescription(TaskArrayList *list, char description[TASK_DESCRIPTION_LENGTH]) {
     if (list->size == 0) {
         return -1;
     }
