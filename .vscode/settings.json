@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "*.erd": "json",
+        "*.vuerd": "json",
+        "task_array_list.h": "c",
+        "array": "c",
+        "string_view": "c",
+        "initializer_list": "c",
+        "task.h": "c",
+        "layout.h": "c",
+        "task_linked_list.h": "c"
+    }
+}
