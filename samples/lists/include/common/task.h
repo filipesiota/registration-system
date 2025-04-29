@@ -10,7 +10,8 @@ typedef struct {
 
 Task createTask();
 int requestTaskIndex(int maxIndex);
+int requestTaskId();
 char* requestTaskDescription();
-void showTask(Task task, int index);
+void showTask(Task *task, int index);
 
 #endif

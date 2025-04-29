@@ -22,7 +22,7 @@ void freeTaskArrayList(TaskArrayList *list) {
     list->size = 0;
 }
 
-void addTask(TaskArrayList *list, Task task) {
+void addTask(TaskArrayList *list, Task *task) {
     Task *temp = realloc(list->tasks, (list->size + 1) * sizeof(Task));
 
     if (temp == NULL) {
@@ -31,7 +31,7 @@ void addTask(TaskArrayList *list, Task task) {
     }
 
     list->tasks = temp;
-    list->tasks[list->size] = task;
+    list->tasks[list->size] = *task;
     list->size++;
 }
 
@@ -70,12 +70,12 @@ void listTasks(TaskArrayList *list) {
     printf("# =============================== #\n");
 
     for (i = 0; i < list->size; i++) {
-        showTask(list->tasks[i], i);
+        showTask(&list->tasks[i], i);
         printf("# =============================== #\n");
     }
 }
 
-int findTaskIndexByDescription(TaskArrayList *list, char description[TASK_DESCRIPTION_LENGTH]) {
+int findTaskIndexByDescription(TaskArrayList *list, const char *description) {
     if (list->size == 0) {
         return -1;
     }

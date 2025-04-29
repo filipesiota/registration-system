@@ -42,6 +42,22 @@ int requestTaskIndex(int maxIndex) {
     return index;
 }
 
+int requestTaskId() {
+    int id;
+
+    do {
+        printf("Informe o ID da tarefa: ");
+        sysCommand("clear_stdin");
+        scanf("%d", &id);
+
+        if (id <= 0) {
+            printf("\nO ID da tarefa deve ser maior que zero!\n\n");
+        }
+    } while (id <= 0);
+
+    return id;
+}
+
 char* requestTaskDescription() {
     char* description = malloc(TASK_DESCRIPTION_LENGTH);
 
@@ -64,8 +80,11 @@ char* requestTaskDescription() {
     return description;
 }
 
-void showTask(Task task, int index) {
-    printf("Indice: %d\n", index);
-    printf("ID: %d\n", task.id);
-    printf("Descricao: %s\n", task.description);
+void showTask(Task* task, int index) {
+    if (index != -1) {
+        printf("Indice: %d\n", index);
+    }
+
+    printf("ID: %d\n", task->id);
+    printf("Descricao: %s\n", task->description);
 }

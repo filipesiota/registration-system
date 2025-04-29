@@ -10,9 +10,9 @@ typedef struct {
 
 TaskArrayList initTaskArrayList();
 void freeTaskArrayList(TaskArrayList *list);
-void addTask(TaskArrayList *list, Task task);
+void addTask(TaskArrayList *list, Task *task);
 void removeTask(TaskArrayList *list, int index);
 void listTasks(TaskArrayList *list);
-int findTaskIndexByDescription(TaskArrayList *list, char description[TASK_DESCRIPTION_LENGTH]);
+int findTaskIndexByDescription(TaskArrayList *list, const char *description);
 
 #endif

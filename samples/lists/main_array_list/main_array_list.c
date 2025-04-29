@@ -50,7 +50,7 @@ void addTodoTask(TaskArrayList *list) {
     printf("%s\n\n", getMenuOptionText(1));
 
     Task task = createTask();
-    addTask(list, task);
+    addTask(list, &task);
 }
 
 void removeTodoTask(TaskArrayList *list) {
@@ -75,7 +75,7 @@ void findTodoTaskByDescription(TaskArrayList *list) {
     printf("\n");
 
     if (index != -1) {
-        showTask(list->tasks[index], index);
+        showTask(&list->tasks[index], index);
         return;
     }
 
