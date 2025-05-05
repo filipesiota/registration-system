@@ -1,8 +1,9 @@
-#include <common/util.h>
+#include "utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #if defined(__linux__)
 #include <stdio_ext.h>
@@ -54,4 +55,17 @@ void normalizeString(char *string) {
 	if (len > 0 && string[len - 1] == '\n') {
 	    string[len - 1] = '\0';
 	}
+}
+
+void readString(CharStack *stack) {
+    char c;
+
+    while ((c = getchar()) != '\n' && c != EOF) {
+		if (c != ' ') { // ignore white space
+			if (isupper(c)) c = tolower(c); // ignore letter case
+			pushChar(stack, c);
+		}
+    }
+
+	pushChar(stack, '\0');
 }

@@ -12,6 +12,17 @@
         "menu.h": "c",
         "util.h": "c",
         "string.h": "c",
-        "stdio.h": "c"
-    }
+        "stdio.h": "c",
+        "utils.h": "c",
+        "__hash_table": "c",
+        "__split_buffer": "c",
+        "bitset": "c",
+        "deque": "c",
+        "queue": "c",
+        "stack": "c",
+        "string": "c",
+        "unordered_map": "c",
+        "vector": "c"
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }
