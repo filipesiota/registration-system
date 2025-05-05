@@ -9,3 +9,6 @@
 
 # Ignore all .exe files
 *.exe
+
+# Keep other files
+!Makefile
