@@ -7,6 +7,7 @@ typedef struct {
 } CharStack;
 
 CharStack* initCharStack();
+void freeCharStack(CharStack* stack);
 void pushChar(CharStack* stack, char value);
 char* popChar(CharStack* stack);
 int isEmpty(CharStack* stack);

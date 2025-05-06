@@ -12,6 +12,17 @@ CharStack* initCharStack() {
     return stack;
 }
 
+void freeCharStack(CharStack* stack) {
+    if (stack == NULL) return;
+
+    if (stack->data != NULL) {
+        free(stack->data);
+        stack->data = NULL;
+    }
+
+    free(stack);
+}
+
 void pushChar(CharStack* stack, char value) {
     stack->top++;
 

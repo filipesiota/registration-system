@@ -22,12 +22,14 @@ int main() {
     
     char* c;
     while ((c = popChar(word)) != NULL) {
-        pushChar(reversedWord, *c);
+        if (*c != '\0') {
+            pushChar(reversedWord, *c);
+        }
+
         free(c);
     }
 
     pushChar(reversedWord, '\0');
-    printf("\nORIGINAL: %s\nREVERSED: %s\n", originalWord, reversedWord->data);
 
     if (strcmp(originalWord, reversedWord->data) == 0) {
         printf("\nA palavra E um palindromo!\n");
@@ -36,10 +38,8 @@ int main() {
     }
 
     free(originalWord);
-    free(word->data);
-    free(word);
-    free(reversedWord->data);
-    free(reversedWord);
+    freeCharStack(word);
+    freeCharStack(reversedWord);
 
     sysCommand("pause_terminal");
     return 0;
