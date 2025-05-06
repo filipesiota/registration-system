@@ -19,6 +19,7 @@ void freeIntegerArrayListSorted(IntegerArrayListSorted *sortedList);
 void addIntegerArrayList(IntegerArrayList *list, int value);
 void removeIntegerArrayList(IntegerArrayList *list, int index);
 void printIntegerArrayList(IntegerArrayList *list);
+void printIntegerArrayListWithHighlight(IntegerArrayList *list, int highlightIndex);
 IntegerArrayList* copyIntegerArrayList(IntegerArrayList *original);
 
 #endif

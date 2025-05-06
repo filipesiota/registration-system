@@ -8,7 +8,7 @@
 
 #define AUTOGENERATE_LIST 1
 #define AUTOGENERATION_SIZE 10
-#define AUTOGENERATION_RANGE 10
+#define AUTOGENERATION_RANGE 50
 #define HIDE_RESULTS 1
 
 int main() {
@@ -16,7 +16,7 @@ int main() {
     IntegerArrayList *list = initIntegerArrayList();
 
     if (AUTOGENERATE_LIST) {
-        printf("Gerando %d numeros aleatorios entre 0 e %d...\n", AUTOGENERATION_SIZE, AUTOGENERATION_RANGE);
+        printf("Gerando %d numeros aleatorios entre 0 e %d...\n\n", AUTOGENERATION_SIZE, AUTOGENERATION_RANGE);
 
         int test[AUTOGENERATION_SIZE];
         srand(time(NULL));

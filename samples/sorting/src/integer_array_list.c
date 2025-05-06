@@ -84,6 +84,30 @@ void printIntegerArrayList(IntegerArrayList *list) {
     printf(" ]\n");
 }
 
+void printIntegerArrayListWithHighlight(IntegerArrayList *list, int highlightIndex) {
+    if (list->arr == NULL) {
+        printf("[Vazio]\n");
+        return;
+    }
+
+    if (highlightIndex == 0) {
+        printf("[ (%d)", list->arr[0]);
+    } else {
+        printf("[ %d", list->arr[0]);
+    }
+
+    int i;
+    for (i = 1; i < list->size; i++) {
+        if (i == highlightIndex) {
+            printf(", (%d)", list->arr[i]);
+        } else {
+            printf(", %d", list->arr[i]);
+        }
+    }
+
+    printf(" ]\n");
+}
+
 IntegerArrayList* copyIntegerArrayList(IntegerArrayList *original) {
     IntegerArrayList *copy = initIntegerArrayList();
 

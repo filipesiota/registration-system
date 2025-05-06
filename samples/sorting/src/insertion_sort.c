@@ -10,6 +10,8 @@ IntegerArrayListSorted* insertionSort(IntegerArrayList *list) {
     clock_t startTime = clock();
     int loops = 0;
 
+    printIntegerArrayList(list);
+
     int i;
     for (i = 1; i < list->size; i++) {
         int value = list->arr[i];
@@ -21,6 +23,8 @@ IntegerArrayListSorted* insertionSort(IntegerArrayList *list) {
             loops++;
         }
         list->arr[j + 1] = value;
+
+        printIntegerArrayListWithHighlight(list, j + 1);
     }
 
     clock_t endTime = clock();
