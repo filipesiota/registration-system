@@ -8,6 +8,7 @@ typedef struct {
 
 typedef struct {
     double executionTime;
+    int loops;
     IntegerArrayList *sortedList;
 } IntegerArrayListSorted;
 

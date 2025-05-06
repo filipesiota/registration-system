@@ -25,7 +25,8 @@
         "vector": "c",
         "insertion_sort.h": "c",
         "integer_array_list.h": "c",
-        "sorting_utils.h": "c"
+        "sorting_utils.h": "c",
+        "bogosort.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

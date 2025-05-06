@@ -21,12 +21,14 @@ void freeIntegerArrayList(IntegerArrayList *list) {
     }
 
     free(list);
+    list = NULL;
 }
 
 IntegerArrayListSorted* initIntegerArrayListSorted() {
     IntegerArrayListSorted *sortedList = malloc(sizeof(IntegerArrayListSorted));
 
     sortedList->executionTime = 0;
+    sortedList->loops = 0;
     sortedList->sortedList = NULL;
 
     return sortedList;
@@ -41,6 +43,7 @@ void freeIntegerArrayListSorted(IntegerArrayListSorted *sortedList) {
     }
 
     free(sortedList);
+    sortedList = NULL;
 }
 
 void addIntegerArrayList(IntegerArrayList *list, int value) {

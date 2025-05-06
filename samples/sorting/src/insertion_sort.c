@@ -8,6 +8,7 @@ IntegerArrayListSorted* insertionSort(IntegerArrayList *list) {
     if (list->arr == NULL) return NULL;
 
     clock_t startTime = clock();
+    int loops = 0;
 
     int i;
     for (i = 1; i < list->size; i++) {
@@ -17,6 +18,7 @@ IntegerArrayListSorted* insertionSort(IntegerArrayList *list) {
         while (j >= 0 && list->arr[j] > value) {
             list->arr[j + 1] = list->arr[j];
             j--;
+            loops++;
         }
         list->arr[j + 1] = value;
     }
@@ -25,6 +27,7 @@ IntegerArrayListSorted* insertionSort(IntegerArrayList *list) {
 
     IntegerArrayListSorted *result = initIntegerArrayListSorted();
     result->executionTime = calculateDurationInMilliseconds(startTime, endTime);
+    result->loops = loops;
     result->sortedList = list;
 
     return result;

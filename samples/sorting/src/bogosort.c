@@ -29,17 +29,20 @@ IntegerArrayListSorted* bogosort(IntegerArrayList *list) {
     if (list->arr == NULL) return NULL;
 
     clock_t startTime = clock();
+    int loops = 0;
 
     srand(time(NULL));
 
     while (!isSorted(list) && calculateDurationInMilliseconds(startTime, clock()) <= BOGOSORT_MAX_EXECUTION_MS) {
         shuffle(list);
+        loops++;
     }
 
     clock_t endTime = clock();
 
     IntegerArrayListSorted *result = initIntegerArrayListSorted();
     result->executionTime = isSorted(list) ? calculateDurationInMilliseconds(startTime, endTime) : -1.0;
+    result->loops = loops;
     result->sortedList = list;
 
     return result;
