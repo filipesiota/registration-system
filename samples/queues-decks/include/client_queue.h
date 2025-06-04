@@ -14,7 +14,7 @@ typedef struct {
 ClientQueue* initClientQueue();
 void freeClientQueue(ClientQueue *queue);
 void enqueueClient(ClientQueue *queue, int clientId);
-void dequeueClient(ClientQueue *queue);
+int* dequeueClient(ClientQueue *queue);
 int isClientQueueEmpty(ClientQueue *queue);
 int isClientQueueFull(ClientQueue *queue);
 int getClientQueueSize(ClientQueue *queue);
