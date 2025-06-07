@@ -11,10 +11,12 @@ ClientQueue* initClientQueue() {
     queue->rear = -1;
     queue->size = 0;
     queue->capacity = MAX_CLIENT_QUEUE_SIZE;
+
+    return queue;
 }
 
 void freeClientQueue(ClientQueue *queue) {
-    if (queue == NULL) return;
+    if (!queue) return;
     free(queue);
 }
 
@@ -24,13 +26,13 @@ void enqueueClient(ClientQueue *queue, int clientId) {
         return;
     }
 
-    if (isClientQueueEmpty(queue)) {
-        queue->front = 0;
-    }
-
     queue->rear = (queue->rear + 1) % queue->capacity;
     queue->size++;
     queue->clients[queue->rear] = clientId;
+
+    if (isClientQueueEmpty(queue)) {
+        queue->front = queue->rear;
+    }
 }
 
 int* dequeueClient(ClientQueue *queue) {
@@ -43,7 +45,7 @@ int* dequeueClient(ClientQueue *queue) {
     if (!dequeuedClient) return NULL;
     *dequeuedClient = queue->clients[queue->front];
 
-    queue->front = (queue->front - 1) % queue->capacity;
+    queue->front = (queue->front + 1) % queue->capacity;
     queue->size--;
 }
 
