@@ -1,12 +1,22 @@
 #ifndef CLIENT_DEQUE_H
 #define CLIENT_DEQUE_H
 
-#define MAX_CLIENT_DEQUE_SIZE 5
+typedef struct ClientNode ClientNode;
+
+struct ClientNode {
+    int clientId;
+    ClientNode *next;
+    ClientNode *prev;
+};
 
 typedef struct {
-    int clients[MAX_CLIENT_DEQUE_SIZE];
-    int front;
-    int rear;
+    ClientNode *start;
+} ClientDoublyLinkedList;
+
+typedef struct {
+    ClientDoublyLinkedList clients;
+    ClientNode *front;
+    ClientNode *rear;
     int size;
     int capacity;
 } ClientDeque;
