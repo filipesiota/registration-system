@@ -12,3 +12,4 @@
 
 # Keep other files
 !Makefile
+.DS_Store
