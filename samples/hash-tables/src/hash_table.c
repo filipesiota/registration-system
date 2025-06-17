@@ -5,23 +5,24 @@
 #include <string.h>
 
 /*======================
-# Utilitaries
+# Funções Utilitárias
 ======================*/
 
+// Função de hash simples: soma os valores ASCII dos caracteres da chave
 int hash(HashTable* table, const char* str) {
   int hash = 0;
-
   while (*str) {
     hash += *str++;
   }
-
-  return hash % table->capacity;
+  return hash % table->capacity; // Garante que o índice esteja dentro da capacidade da tabela
 }
 
+// Calcula o fator de carga da tabela (quantidade de elementos / capacidade)
 float calculateLoadFactor(HashTable* table) {
   return (float)table->size / (float)table->capacity;
 }
 
+// Recria a tabela com o dobro da capacidade e reinsere todos os elementos
 void rehash(HashTable** tableRef) {
   HashTable* oldTable = *tableRef;
   HashTable* newTable = initHashTable(oldTable->capacity * 2);
@@ -40,9 +41,10 @@ void rehash(HashTable** tableRef) {
 }
 
 /*======================
-# Core
+# Funções Principais
 ======================*/
 
+// Inicializa uma nova tabela hash com a capacidade especificada
 HashTable* initHashTable(int capacity) {
   HashTable *table = malloc(sizeof(HashTable));
   if (!table) return NULL;
@@ -60,6 +62,7 @@ HashTable* initHashTable(int capacity) {
   return table;
 }
 
+// Libera toda a memória alocada pela tabela e seus elementos
 void freeHashTable(HashTable *table) {
   if (!table) return;
 
@@ -79,11 +82,13 @@ void freeHashTable(HashTable *table) {
   free(table);
 }
 
+// Insere ou atualiza um valor associado a uma chave na tabela
 void setValueForKey(HashTable** tableRef, int value, const char* key) {
   HashTable *table = *tableRef;
   int index = hash(table, key);
   HashTableNode* node = table->array[index];
 
+  // Atualiza valor se a chave já existir
   while (node) {
     if (strcmp(node->key, key) == 0) {
       node->value = value;
@@ -93,6 +98,7 @@ void setValueForKey(HashTable** tableRef, int value, const char* key) {
     node = node->next;
   }
 
+  // Cria novo nó e insere no início da lista encadeada do índice
   HashTableNode* newNode = malloc(sizeof(HashTableNode));
   newNode->key = strdup(key);
   newNode->value = value;
@@ -100,11 +106,13 @@ void setValueForKey(HashTable** tableRef, int value, const char* key) {
   table->array[index] = newNode;
   table->size++;
 
+  // Rehash se o fator de carga for excedido
   if (calculateLoadFactor(table) > HASH_TABLE_MAX_LOAD_FACTOR) {
     rehash(tableRef);
   }
 }
 
+// Retorna ponteiro para o valor associado a uma chave, ou NULL se não existir
 int* getValueFromKey(HashTable* table, const char* key) {
   int index = hash(table, key);
   HashTableNode* node = table->array[index];
@@ -120,6 +128,7 @@ int* getValueFromKey(HashTable* table, const char* key) {
   return NULL;
 }
 
+// Remove uma chave da tabela, se existir
 void removeKey(HashTable* table, const char* key) {
   int index = hash(table, key);
   HashTableNode* node = table->array[index];
@@ -144,6 +153,7 @@ void removeKey(HashTable* table, const char* key) {
   }
 }
 
+// Exibe o estado atual da tabela hash no terminal
 void printHashTable(HashTable* table) {
   printf("Capacidade: %d\n", table->capacity);
   printf("Utilizado: %d\n", table->size);
