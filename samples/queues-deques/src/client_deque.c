@@ -7,47 +7,67 @@ ClientDeque* initClientDeque() {
   ClientDeque *deque = malloc(sizeof(ClientDeque));
   if (!deque) return NULL;
 
-  deque->front = 1;
-  deque->rear = -1;
+  deque->front = NULL;
+  deque->rear = NULL;
   deque->size = 0;
-  deque->capacity = MAX_CLIENT_DEQUE_SIZE;
 
   return deque;
 }
 
 void freeClientDeque(ClientDeque *deque) {
   if (!deque) return;
+
+  ClientNode *node;
+
+  while (deque->front) {
+    node = deque->front;
+    deque->front = deque->front->next;
+    free(node);
+  }
+
   free(deque);
 }
 
 void addClientToFront(ClientDeque *deque, int clientId) {
-  if (isClientDequeFull(deque)) {
-    printf("O deque esta cheio!\n");
-    return;
+  ClientNode *newNode = malloc(sizeof(ClientNode));
+  if (!newNode) return;
+
+  newNode->clientId = clientId;
+  newNode->prev = NULL;
+  newNode->next = deque->front;
+
+  if (deque->front) {
+    deque->front->prev = newNode;
   }
 
-  deque->front = (deque->front - 1) % deque->capacity;
+  deque->front = newNode;
+
+  if (deque->rear == NULL) {
+    deque->rear = newNode;
+  }
+
   deque->size++;
-  deque->clients[deque->front] = clientId;
-
-  if (isClientDequeEmpty(deque)) {
-    deque->rear = deque->front;
-  }
 }
 
 void addClientToRear(ClientDeque *deque, int clientId) {
-  if (isClientDequeFull(deque)) {
-    printf("O deque esta cheio!\n");
-    return;
+  ClientNode *newNode = malloc(sizeof(ClientNode));
+  if (!newNode) return;
+
+  newNode->clientId = clientId;
+  newNode->next = NULL;
+  newNode->prev = deque->rear;
+
+  if (deque->rear) {
+    deque->rear->next = newNode;
   }
 
-  deque->rear = (deque->rear + 1) % deque->capacity;
+  deque->rear = newNode;
+
+  if (deque->front == NULL) {
+    deque->front = newNode;
+  }
+
   deque->size++;
-  deque->clients[deque->rear] = clientId;
-
-  if (isClientDequeEmpty(deque)) {
-    deque->front = deque->rear;
-  }
 }
 
 int* removeClientFromFront(ClientDeque *deque) {
@@ -58,9 +78,18 @@ int* removeClientFromFront(ClientDeque *deque) {
 
   int* removedClient = malloc(sizeof(int));
   if (!removedClient) return NULL;
-  *removedClient = deque->clients[deque->front];
+  *removedClient = deque->front->clientId;
 
-  deque->front = (deque->front + 1) % deque->capacity;
+  ClientNode *node = deque->front;
+  deque->front = deque->front->next;
+
+  if (deque->front) {
+    deque->front->prev = NULL;
+  } else {
+    deque->rear = NULL;
+  }
+
+  free(node);
   deque->size--;
 
   return removedClient;
@@ -74,30 +103,42 @@ int* removeClientFromRear(ClientDeque *deque) {
 
   int* removedClient = malloc(sizeof(int));
   if (!removedClient) return NULL;
-  *removedClient = deque->clients[deque->rear];
+  *removedClient = deque->rear->clientId;
 
-  deque->rear = (deque->rear - 1) % deque->capacity;
+  ClientNode *node = deque->rear;
+  deque->rear = deque->rear->prev;
+
+  if (deque->rear) {
+    deque->rear->next = NULL;
+  } else {
+    deque->front = NULL;
+  }
+
+  free(node);
   deque->size--;
 
   return removedClient;
 }
 
 int isClientDequeEmpty(ClientDeque *deque) {
-  if (deque->size == 0) {
-    return 1;
-  }
-
-  return 0;
+  return !deque || deque->front == NULL;
 }
 
-int isClientDequeFull(ClientDeque *deque) {
-  if (deque->size == deque->capacity) {
-    return 1;
+void printClientDeque(ClientDeque *deque) {
+  if (isClientDequeEmpty(deque)) {
+    printf("[Vazia]\n");
+    return;
   }
 
-  return 0;
-}
+  ClientNode *node = deque->front;
 
-int getClientDequeSize(ClientDeque *deque) {
-  return deque->size;
+  while (node) {
+    if (node->prev) {
+      printf(" -> %d", node->clientId);
+    } else {
+      printf("%d", node->clientId);
+    }
+  }
+
+  printf("\n");
 }

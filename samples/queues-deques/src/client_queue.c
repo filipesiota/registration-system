@@ -65,6 +65,23 @@ int isClientQueueFull(ClientQueue *queue) {
     return 0;
 }
 
-int getClientQueueSize(ClientQueue *queue) {
-    return queue->size;
+void printClientQueue(ClientQueue *queue) {
+    if (isClientQueueEmpty(queue)) {
+        printf("[Vazia]\n");
+        return;
+    }
+
+    int currentIndex = queue->front;
+
+    do {
+        printf("%d", queue->clients[currentIndex]);
+
+        if (currentIndex != queue->rear) {
+            printf(" -> ");
+        }
+
+        currentIndex = (currentIndex + 1) % queue->capacity;
+    } while (currentIndex != (queue->rear + 1) % queue->capacity);
+
+    printf("\n");
 }

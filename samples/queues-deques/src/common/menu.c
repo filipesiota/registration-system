@@ -9,13 +9,19 @@ char* getMenuOptionText(int option) {
         case 0:
             return "(0) Sair";
         case 1:
-            return "(1) Inserir tarefa";
+            return "(1) Inserir cliente convencional";
         case 2:
-            return "(2) Remover tarefa";
+            return "(2) Atender cliente convencional";
         case 3:
-            return "(3) Listar tarefas";
+            return "(3) Inserir cliente prioritário (início)";
         case 4:
-            return "(4) Buscar tarefa pela descricao";
+            return "(4) Inserir cliente prioritário (fim)";
+        case 5:
+            return "(5) Atender cliente prioritário (início)";
+        case 6:
+            return "(6) Desistência de cliente prioritário (fim)";
+        case 7:
+            return "(7) Exibir filas";
     }
 }
 

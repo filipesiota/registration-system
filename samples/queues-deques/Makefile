@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Iinclude
 
-SRC=$(wildcard src/*.c)
+SRC=$(shell find src -name '*.c')
 
 all: program
 

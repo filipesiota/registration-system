@@ -17,6 +17,6 @@ void enqueueClient(ClientQueue *queue, int clientId);
 int* dequeueClient(ClientQueue *queue);
 int isClientQueueEmpty(ClientQueue *queue);
 int isClientQueueFull(ClientQueue *queue);
-int getClientQueueSize(ClientQueue *queue);
+void printClientQueue(ClientQueue *queue);
 
 #endif
