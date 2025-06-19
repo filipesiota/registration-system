@@ -121,7 +121,7 @@ int* removeClientFromRear(ClientDeque *deque) {
 }
 
 int isClientDequeEmpty(ClientDeque *deque) {
-  return !deque || deque->front == NULL;
+  return deque->front == NULL;
 }
 
 void printClientDeque(ClientDeque *deque) {
@@ -138,6 +138,8 @@ void printClientDeque(ClientDeque *deque) {
     } else {
       printf("%d", node->clientId);
     }
+
+    node = node->next;
   }
 
   printf("\n");

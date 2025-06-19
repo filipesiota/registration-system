@@ -129,9 +129,9 @@ void removePrioritaryClientFromRear(ClientDeque *line) {
 }
 
 void printLines(ClientQueue *conventionalLine, ClientDeque *prioritaryLine) {
-    printf("Fila convencional: ");
+    printf("Fila convencional (%d): ", conventionalLine->size);
     printClientQueue(conventionalLine);
 
-    printf("Fila prioritaria: ");
+    printf("Fila prioritaria (%d): ", prioritaryLine->size);
     printClientDeque(prioritaryLine);    
 }
