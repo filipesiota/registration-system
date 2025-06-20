@@ -11,5 +11,8 @@
 *.exe
 
 # Keep other files
-!Makefile
+!
+
+# Ignore other files
 .DS_Store
+.vscode/
