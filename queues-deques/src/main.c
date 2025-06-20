@@ -92,6 +92,7 @@ void serveConventionalClient(ClientQueue *line) {
     }
 
     printf("Atendendo cliente convencional com ID: %d\n", *clientId);
+    free(clientId);
 }
 
 void addPrioritaryClientToFront(ClientDeque *line) {
@@ -115,6 +116,7 @@ void servePrioritaryClientFromFront(ClientDeque *line) {
     }
 
     printf("Atendendo cliente prioritario com ID: %d\n", *clientId);
+    free(clientId);
 }
 
 void removePrioritaryClientFromRear(ClientDeque *line) {
@@ -126,6 +128,7 @@ void removePrioritaryClientFromRear(ClientDeque *line) {
     }
 
     printf("Desistencia de cliente prioritario com ID: %d\n", *clientId);
+    free(clientId);
 }
 
 void printLines(ClientQueue *conventionalLine, ClientDeque *prioritaryLine) {
