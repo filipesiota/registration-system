@@ -1,6 +1,5 @@
-# Queues & Deques
-
-**Atividade:** Filas e Deques  
+# Árvores Binárias
+  
 **Nome:** Filipe Mallmann Siota  
 **Curso:** TADS
 
