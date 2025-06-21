@@ -1,5 +1,6 @@
 #include "binary_search_tree.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 BST* initBST() {
@@ -17,6 +18,26 @@ void freeBST(BST *tree) {
   freeBSTNode(tree->root);
   
   free(tree);
+}
+
+BSTNode* initBSTNode(int value) {
+  BSTNode *node = malloc(sizeof(BSTNode));
+  if (!node) return NULL;
+
+  node->value = value;
+  node->left = NULL;
+  node->right = NULL;
+
+  return node;
+}
+
+void freeBSTNode(BSTNode *node) {
+  if (!node) return;
+
+  freeBSTNode(node->left);
+  freeBSTNode(node->right);
+
+  free(node);
 }
 
 void insertBSTNode(BST *tree, int value) {
@@ -98,24 +119,4 @@ int getBSTBranchHeight(BSTNode *node, int currentHeight) {
 
 int getBSTHeight(BST *tree) {
   return getBSTBranchHeight(tree->root, 0);
-}
-
-BSTNode* initBSTNode(int value) {
-  BSTNode *node = malloc(sizeof(BSTNode));
-  if (!node) return NULL;
-
-  node->value = value;
-  node->left = NULL;
-  node->right = NULL;
-
-  return node;
-}
-
-void freeBSTNode(BSTNode *node) {
-  if (!node) return;
-
-  freeBSTNode(node->left);
-  freeBSTNode(node->right);
-
-  free(node);
 }

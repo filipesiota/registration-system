@@ -15,14 +15,18 @@ typedef struct {
 
 BST* initBST();
 void freeBST(BST *tree);
+
+BSTNode* initBSTNode(int value);
+void freeBSTNode(BSTNode *node);
+
 void insertBSTNode(BST *tree, int value);
 void printPreorderRoute(BSTNode *root);
 void printInorderRoute(BSTNode *root);
 void printPostorderRoute(BSTNode *root);
-int getBSTNumberOfLeafNodes(BST *tree);
-int getBSTHeight(BST *tree);
 
-BSTNode* initBSTNode(int value);
-void freeBSTNode(BSTNode *node);
+int getBSTBranchNumberOfLeafNodes(BSTNode *node);
+int getBSTNumberOfLeafNodes(BST *tree);
+int getBSTBranchHeight(BSTNode *node, int currentHeight);
+int getBSTHeight(BST *tree);
 
 #endif

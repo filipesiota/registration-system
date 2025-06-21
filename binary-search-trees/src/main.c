@@ -2,29 +2,34 @@
 #include <stdlib.h>
 
 #include "common/util.h"
-#include "common/menu.h"
-#include "hash_table.h"
+#include "binary_search_tree.h"
 
 int main() {
-    int option;
+    BST *tree = initBST();
 
-    do {
-        option = getSelectedMenuOption();
+    int numbers[] = {8, 4, 10, 2, 6, 9, 12};
+    int numbersLength = sizeof(numbers) / sizeof(numbers[0]);
+    int i;
 
-        if (option != 0) {
-            sysCommand("clear_terminal");
-            printf("%s\n\n", getMenuOptionText(option));
+    for (i = 0; i < numbersLength; i++) {
+        insertBSTNode(tree, numbers[i]);
+    }
 
-            switch (option) {
-                default:
-            }
+    sysCommand("clear_terminal");
+    
+    printf("Pre-ordem: ");
+    printPreorderRoute(tree->root);
 
-            printf("\nAcao finalizada!\n");
-            sysCommand("pause_terminal");
-        }
-    } while (option != 0);
+    printf("\nIn-ordem: ");
+    printInorderRoute(tree->root);
 
-    // free
+    printf("\nPos-ordem: ");
+    printPostorderRoute(tree->root);
+
+    printf("\n\nNúmero de folhas da BST: %d", getBSTNumberOfLeafNodes(tree));
+    printf("\nAltura da BST: %d\n", getBSTHeight(tree));
+
+    freeBST(tree);
 
     printf("\nPrograma finalizado!\n");
     sysCommand("pause_terminal");
