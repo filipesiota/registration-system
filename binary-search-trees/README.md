@@ -1,4 +1,4 @@
-# Árvores Binárias
+# Árvores Binárias de Busca (BST)
   
 **Nome:** Filipe Mallmann Siota  
 **Curso:** TADS
