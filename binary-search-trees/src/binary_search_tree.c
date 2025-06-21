@@ -3,23 +3,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Inicializa a estrutura da árvore binária de busca (BST)
 BST* initBST() {
   BST *tree = malloc(sizeof(BST));
   if (!tree) return NULL;
 
   tree->root = NULL;
-  
   return tree;
 }
 
+// Libera toda a memória da árvore BST
 void freeBST(BST *tree) {
   if (!tree) return;
-  
-  freeBSTNode(tree->root);
-  
-  free(tree);
+
+  freeBSTNode(tree->root); // Libera nós recursivamente
+  free(tree); // Libera estrutura principal
 }
 
+// Inicializa um nó da árvore com um valor específico
 BSTNode* initBSTNode(int value) {
   BSTNode *node = malloc(sizeof(BSTNode));
   if (!node) return NULL;
@@ -31,28 +32,30 @@ BSTNode* initBSTNode(int value) {
   return node;
 }
 
+// Libera recursivamente os nós da árvore
 void freeBSTNode(BSTNode *node) {
   if (!node) return;
 
   freeBSTNode(node->left);
   freeBSTNode(node->right);
-
   free(node);
 }
 
+// Insere um novo valor na árvore mantendo a propriedade de BST
 void insertBSTNode(BST *tree, int value) {
   if (!tree) return;
 
   BSTNode *newNode = initBSTNode(value);
 
   if (!tree->root) {
-    tree->root = newNode;
+    tree->root = newNode; // Se a árvore estiver vazia, define a raiz
     return;
   }
 
   BSTNode *currentNode = tree->root;
   BSTNode *targetNode;
 
+  // Encontra a posição correta para inserção
   while (currentNode) {
     targetNode = currentNode;
 
@@ -63,6 +66,7 @@ void insertBSTNode(BST *tree, int value) {
     }
   }
 
+  // Insere o novo nó como filho esquerdo ou direito
   if (value < targetNode->value) {
     targetNode->left = newNode;
   } else {
@@ -70,6 +74,7 @@ void insertBSTNode(BST *tree, int value) {
   }
 }
 
+// Percorre e imprime a árvore em pré-ordem (raiz, esquerda, direita)
 void printPreorderRoute(BSTNode *root) {
   if (!root) return;
 
@@ -78,6 +83,7 @@ void printPreorderRoute(BSTNode *root) {
   printPreorderRoute(root->right);
 }
 
+// Percorre e imprime a árvore em ordem (esquerda, raiz, direita)
 void printInorderRoute(BSTNode *root) {
   if (!root) return;
 
@@ -86,6 +92,7 @@ void printInorderRoute(BSTNode *root) {
   printInorderRoute(root->right);
 }
 
+// Percorre e imprime a árvore em pós-ordem (esquerda, direita, raiz)
 void printPostorderRoute(BSTNode *root) {
   if (!root) return;
 
@@ -94,20 +101,24 @@ void printPostorderRoute(BSTNode *root) {
   printf("%d ", root->value);
 }
 
+// Retorna o número de nós folha a partir de um nó (folha = sem filhos)
 int getBSTBranchNumberOfLeafNodes(BSTNode *node) {
   if (!node) return 0;
 
   if (!node->left && !node->right) {
-    return 1;
+    return 1; // É folha
   }
 
+  // Soma folhas da subárvore esquerda e direita
   return getBSTBranchNumberOfLeafNodes(node->left) + getBSTBranchNumberOfLeafNodes(node->right);
 }
 
+// Retorna o número total de folhas da árvore
 int getBSTNumberOfLeafNodes(BST *tree) {
   return getBSTBranchNumberOfLeafNodes(tree->root);
 }
 
+// Calcula a altura de um ramo da árvore
 int getBSTBranchHeight(BSTNode *node, int currentHeight) {
   if (!node) return currentHeight;
 
@@ -117,6 +128,7 @@ int getBSTBranchHeight(BSTNode *node, int currentHeight) {
   return (leftHeight > rightHeight) ? leftHeight : rightHeight;
 }
 
+// Retorna a altura total da árvore (nível máximo até uma folha)
 int getBSTHeight(BST *tree) {
   return getBSTBranchHeight(tree->root, 0);
 }
