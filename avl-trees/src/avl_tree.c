@@ -5,15 +5,16 @@
 
 #include "common/util.h"
 
+// Inicializa uma nova arvore AVL
 AVLTree* initAVLTree() {
   AVLTree *tree = malloc(sizeof(AVLTree));
   if (!tree) return NULL;
 
   tree->root = NULL;
-
   return tree;
 }
 
+// Libera a memoria da arvore AVL
 void freeAVLTree(AVLTree *tree) {
   if (!tree) return;
 
@@ -21,18 +22,20 @@ void freeAVLTree(AVLTree *tree) {
   free(tree);
 }
 
+// Cria e inicializa um novo no AVL
 AVLTreeNode* initAVLTreeNode(int value) {
   AVLTreeNode *node = malloc(sizeof(AVLTreeNode));
   if (!node) return NULL;
 
   node->value = value;
-  node->height = 1; // Leaf node has height 1
+  node->height = 1; // Folha comeca com altura 1
   node->left = NULL;
   node->right = NULL;
 
   return node;
 }
 
+// Libera recursivamente os nos da arvore
 void freeAVLTreeNode(AVLTreeNode *node) {
   if (!node) return;
 
@@ -41,56 +44,62 @@ void freeAVLTreeNode(AVLTreeNode *node) {
   free(node);
 }
 
+// Insere um valor na arvore AVL e reequilibra se necessario
 AVLTreeNode *insertAVLTreeNode(AVLTreeNode *root, int value) {
   if (!root) {
-    return initAVLTreeNode(value);
+    return initAVLTreeNode(value); // Insere novo no
   }
 
+  // Insere recursivamente na subarvore correta
   if (value < root->value) {
     root->left = insertAVLTreeNode(root->left, value);
   } else if (value > root->value) {
     root->right = insertAVLTreeNode(root->right, value);
   } else {
-    return root;
+    return root; // Valor duplicado, nao faz nada
   }
 
+  // Atualiza a altura do no
   updateAVLTreeNodeHeight(root);
 
+  // Calcula fator de balanceamento
   int balanceFactor = getAVLTreeNodeBalanceFactor(root);
 
+  // Reequilibra se necessario
   if (balanceFactor > 1) {
     if (value > root->left->value) {
+      root->left = rotateLeft(root->left); // Caso LR
       printf("Rebalanceamento LR");
-      root->left = rotateLeft(root->left); // Case LR
     } else {
       printf("Rebalanceamento LL");
     }
-
-    return rotateRight(root); // Case LL and LR
+    return rotateRight(root); // LL ou LR
   }
 
   if (balanceFactor < -1) {
     if (value < root->right->value) {
-      root->right = rotateRight(root->right); // Case RL
+      root->right = rotateRight(root->right); // Caso RL
       printf("Rebalanceamento RL");
     } else {
       printf("Rebalanceamento RR");
     }
-
-    return rotateLeft(root); // Case RR and RL
+    return rotateLeft(root); // RR ou RL
   }
 
   return root;
 }
 
+// Remove um valor da arvore AVL e reequilibra
 AVLTreeNode *removeAVLTreeNode(AVLTreeNode *root, int value) {
   if (!root) return root;
 
+  // Busca recursiva pelo valor
   if (value < root->value) {
     root->left = removeAVLTreeNode(root->left, value);
   } else if (value > root->value) {
     root->right = removeAVLTreeNode(root->right, value);
   } else {
+    // No com no maximo um filho
     if (!root->left || !root->right) {
       AVLTreeNode *temp = root->left ? root->left : root->right;
 
@@ -103,6 +112,7 @@ AVLTreeNode *removeAVLTreeNode(AVLTreeNode *root, int value) {
 
       free(temp);
     } else {
+      // No com dois filhos
       AVLTreeNode *temp = minAVLTreeNodeValue(root->right);
       root->value = temp->value;
       root->right = removeAVLTreeNode(root->right, temp->value);
@@ -111,35 +121,35 @@ AVLTreeNode *removeAVLTreeNode(AVLTreeNode *root, int value) {
 
   if (!root) return root;
 
+  // Atualiza altura e balanceia
   updateAVLTreeNodeHeight(root);
 
   int balanceFactor = getAVLTreeNodeBalanceFactor(root);
 
   if (balanceFactor > 1) {
     if (getAVLTreeNodeBalanceFactor(root->left) < 0) {
-      root->left = rotateLeft(root->left); // Case LR
+      root->left = rotateLeft(root->left); // Caso LR
       printf("Rebalanceamento LR");
     } else {
       printf("Rebalanceamento LL");
     }
-
-    return rotateRight(root); // Case LL and LR
+    return rotateRight(root);
   }
 
   if (balanceFactor < -1) {
     if (getAVLTreeNodeBalanceFactor(root->right) > 0) {
-      root->right = rotateRight(root->right); // Case RL
+      root->right = rotateRight(root->right); // Caso RL
       printf("Rebalanceamento RL");
     } else {
       printf("Rebalanceamento RR");
     }
-
-    return rotateLeft(root); // Case RR and RL
+    return rotateLeft(root);
   }
 
   return root;
 }
 
+// Impressao em ordem (esquerda, raiz, direita)
 void printInorderRoute(AVLTreeNode *root) {
   if (!root) return;
 
@@ -148,6 +158,7 @@ void printInorderRoute(AVLTreeNode *root) {
   printInorderRoute(root->right);
 }
 
+// Impressao com fator de balanceamento de cada no
 void printInorderRouteWithBalanceFactor(AVLTreeNode *root) {
   if (!root) return;
 
@@ -156,18 +167,22 @@ void printInorderRouteWithBalanceFactor(AVLTreeNode *root) {
   printInorderRouteWithBalanceFactor(root->right);
 }
 
+// Retorna altura de um no
 int getAVLTreeNodeHeight(AVLTreeNode *node) {
   return !node ? 0 : node->height;
 }
 
+// Atualiza altura de um no baseado nos filhos
 void updateAVLTreeNodeHeight(AVLTreeNode *node) {
   node->height = 1 + max(getAVLTreeNodeHeight(node->left), getAVLTreeNodeHeight(node->right));
 }
 
+// Retorna o fator de balanceamento de um no
 int getAVLTreeNodeBalanceFactor(AVLTreeNode *node) {
   return !node ? 0 : getAVLTreeNodeHeight(node->left) - getAVLTreeNodeHeight(node->right);
 }
 
+// Encontra o menor valor de uma subarvore
 AVLTreeNode *minAVLTreeNodeValue(AVLTreeNode *node) {
   AVLTreeNode *currentNode = node;
 
@@ -178,6 +193,7 @@ AVLTreeNode *minAVLTreeNodeValue(AVLTreeNode *node) {
   return currentNode;
 }
 
+// Rotacao simples a direita (para corrigir desbalanceamento para esquerda)
 AVLTreeNode *rotateRight(AVLTreeNode *node) {
   AVLTreeNode *newRoot = node->left;
   AVLTreeNode *temp = newRoot->right;
@@ -191,6 +207,7 @@ AVLTreeNode *rotateRight(AVLTreeNode *node) {
   return newRoot;
 }
 
+// Rotacao simples a esquerda (para corrigir desbalanceamento para direita)
 AVLTreeNode *rotateLeft(AVLTreeNode *node) {
   AVLTreeNode *newRoot = node->right;
   AVLTreeNode *temp = newRoot->left;
